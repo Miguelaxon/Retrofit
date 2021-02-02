@@ -1,9 +1,14 @@
 package com.example.retrofit.model
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Headers
 
 interface IApi {
     @GET("realestate")
-    fun getDataFromApi(): Call<List<TerraMars>>
+    suspend fun getFetchTerraMarsCoroutines(): Response<List<TerraMars>>
+
+    @GET("realestate")
+    fun getFetchTerraMarsEnqueue(): Call<List<TerraMars>>
 }
