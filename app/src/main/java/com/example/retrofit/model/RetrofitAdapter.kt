@@ -23,7 +23,7 @@ class RetrofitAdapter: RecyclerView.Adapter<RetrofitAdapter.TerrMarsViewHolder>(
     inner class TerrMarsViewHolder(private val binding: ItemJsonBinding):
     RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         fun bind(terraMars: TerraMars) {
-            Glide.with(binding.root).load(terraMars.imgSrc).into(binding.imageView2)
+            Glide.with(binding.imageView2).load(terraMars.imgSrc).into(binding.imageView2)
             itemView.setOnClickListener(this)
         }
         override fun onClick(v: View?) {

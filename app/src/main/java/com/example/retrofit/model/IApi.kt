@@ -8,7 +8,4 @@ import retrofit2.http.Headers
 interface IApi {
     @GET("realestate")
     suspend fun getFetchTerraMarsCoroutines(): Response<List<TerraMars>>
-
-    @GET("realestate")
-    fun getFetchTerraMarsEnqueue(): Call<List<TerraMars>>
 }

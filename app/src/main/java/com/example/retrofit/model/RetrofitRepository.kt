@@ -1,34 +1,20 @@
 package com.example.retrofit.model
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RetrofitRepository() {
+class RetrofitRepository(private val terraMarsDAO: TerraMarsDAO) {
     private val service = RetrofitClient.getClientRetrofit()
     val liveDataTerraMars = MutableLiveData<List<TerraMars>>()
+    val listAllData: LiveData<List<TerraMars>> = terraMarsDAO.getAllTerraMars()
 
-    fun getFetchTerraMarsEnqueue(): LiveData<List<TerraMars>> {
-        service.getFetchTerraMarsEnqueue().enqueue(object : Callback<List<TerraMars>>{
-            override fun onFailure(call: Call<List<TerraMars>>, t: Throwable) {
-                Log.e("Error", t.message.toString())
-            }
-
-            override fun onResponse(
-                call: Call<List<TerraMars>>,
-                response: Response<List<TerraMars>>
-            ) {
-                when(response.code()){
-                    in 200..299 -> liveDataTerraMars.value = response.body()
-                    in 300..399 -> Log.d("ERROR", response.message().toString())
-                    else -> Log.d("ERROR", "Error del servidor ${response.code()}")
-                }
-            }
-        })
-        return liveDataTerraMars
+    suspend fun insertAllTerraMars(listTerraMars: List<TerraMars>){
+        terraMarsDAO.insertAllTerraMars(listTerraMars)
     }
 
     suspend fun getFetchTerraMarsCoroutines() {
@@ -37,7 +23,7 @@ class RetrofitRepository() {
             val response = RetrofitClient.getClientRetrofit().getFetchTerraMarsCoroutines()
             when (response.isSuccessful) {
                 true -> response.body()?.let {
-                    liveDataTerraMars.value = it
+                    insertAllTerraMars(it)
                 }
                 false -> Log.d("ERROR", "${response.code()}: ${response.errorBody()}")
             }

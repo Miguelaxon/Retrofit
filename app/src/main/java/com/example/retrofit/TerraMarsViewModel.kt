@@ -1,28 +1,26 @@
 package com.example.retrofit
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.retrofit.model.RetrofitDB
 import com.example.retrofit.model.RetrofitRepository
 import com.example.retrofit.model.TerraMars
 import kotlinx.coroutines.launch
 
-class TerraMarsViewModel: ViewModel() {
+class TerraMarsViewModel(appication: Application): AndroidViewModel(appication) {
     private val repository: RetrofitRepository
-    private val selectedTerraMars: MutableLiveData<TerraMars> = MutableLiveData()
+    val allData: LiveData<List<TerraMars>>
+    val selectedTerraMars: MutableLiveData<TerraMars> = MutableLiveData()
 
     init {
-        repository = RetrofitRepository()
+        val terraMars = RetrofitDB.getDataBase(appication).getTerraMarsDao()
+        repository = RetrofitRepository(terraMars)
         viewModelScope.launch {
             repository.getFetchTerraMarsCoroutines()
         }
+        allData = repository.listAllData
     }
-
-    fun getFetchTerraMars(): LiveData<List<TerraMars>>{
-        return repository.getFetchTerraMarsEnqueue()
-    }
-
+    //se podría usar para refrescar la vista
     fun getFetchTerraMarsCoroutines(): LiveData<List<TerraMars>>{
         return repository.liveDataTerraMars
     }
